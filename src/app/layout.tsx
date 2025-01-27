@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { SessionProvider } from 'next-auth/react';
 import { QueryProvider, ToastProvider } from '@/shared/providers';
 import './globals.scss';
 
@@ -14,9 +15,11 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
-        <QueryProvider>
-          <ToastProvider>{children}</ToastProvider>
-        </QueryProvider>
+        <SessionProvider>
+          <QueryProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </QueryProvider>
+        </SessionProvider>
       </body>
     </html>
   );
