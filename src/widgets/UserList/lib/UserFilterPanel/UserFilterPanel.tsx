@@ -59,6 +59,29 @@ export const UserFilterPanel: FC<UserFilterPanelProps> = ({
   const router = useRouter();
   const { toast } = useToast();
 
+  const onSubmit = async (value: FilterUsersFormSchema) => {
+    const resp = await filterUsersAction(value);
+
+    if (resp.error === AUTH_IS_REQUIRED) {
+      toast({
+        title: 'Необходима авторизация!',
+        variant: 'destructive',
+      });
+      return router.push(`/login?callbackUrl=${location.href}`);
+    }
+    if (resp.error) {
+      return toast({
+        title: 'Что-то пошло не так..',
+        description: resp.error,
+        variant: 'destructive',
+      });
+    }
+
+    if (resp.users) {
+      updateUsers(resp.users.map(user => transferUserToTabled(user)));
+    }
+  };
+
   return (
     <Form
       ref={formRef}
@@ -67,23 +90,7 @@ export const UserFilterPanel: FC<UserFilterPanelProps> = ({
         event.preventDefault();
         filterUsersForm.handleSubmit(value => {
           startTransition(async () => {
-            const resp = await filterUsersAction(value);
-
-            if (resp.error === AUTH_IS_REQUIRED) {
-              toast({
-                title: 'Необходима авторизация!',
-                variant: 'destructive',
-              });
-              router.push(`/login?callbackUrl=${location.href}`);
-            } else if (resp.error) {
-              toast({
-                title: 'Что-то пошло не так..',
-                description: resp.error,
-                variant: 'destructive',
-              });
-            } else if (resp.users) {
-              updateUsers(resp.users.map(user => transferUserToTabled(user)));
-            }
+            await onSubmit(value);
           });
         })(event);
       }}

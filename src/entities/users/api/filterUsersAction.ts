@@ -22,29 +22,16 @@ export const filterUsersAction = async (
     const users = await api
       .post<User[]>('users/filter', {
         json: {
-          // name: body.name,
-          // posts: body.posts?.map(el => JSON.parse(el)),
-          // branches: body.branches?.map(el => JSON.parse(el)),
-          // courses: body.courses?.map(el => JSON.parse(el)),
-          name: 'hello',
-          posts: [],
-          branches: [],
+          name: body.name,
+          posts: body.posts?.map(el => JSON.parse(el)),
+          branches: body.branches?.map(el => JSON.parse(el)),
+          courses: body.courses?.map(el => JSON.parse(el)),
         },
         headers: {
           Authorization: `Bearer ${session.user.body.accessToken}`,
         },
       })
       .json();
-
-    console.log(
-      {
-        name: body.name,
-        posts: body.posts?.map(el => JSON.parse(el)),
-        branches: body.branches?.map(el => JSON.parse(el)),
-        courses: body.courses?.map(el => JSON.parse(el)),
-      },
-      users
-    );
 
     return { users };
   } catch (error) {
