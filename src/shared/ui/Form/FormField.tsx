@@ -15,10 +15,16 @@ export type FormChildrenProps<Values extends FieldValues> = {
   name: Path<Values>;
   label?: string;
   description?: string;
+  control: Control<Values>;
+  containerClassName?: string;
+
+  // multi-select only
+  onValueChange?: (value: string[]) => void;
+  defaultValue?: string[];
 };
 
 type FormChildren<Values extends FieldValues> = ReactElement & {
-  props: FormChildrenProps<Values>;
+  props: Omit<FormChildrenProps<Values>, 'control' | 'containerClassName'>;
 };
 
 type FormFieldProps<Values extends FieldValues> = {
@@ -43,6 +49,8 @@ export const FormField = <Values extends FieldValues = FieldValues>({
           <FormLabel>{children.props.label}</FormLabel>
           <FormControl>
             {cloneElement(children, {
+              onValueChange: field.onChange,
+              defaultValue: field.value,
               ...children.props,
               ...field,
             })}

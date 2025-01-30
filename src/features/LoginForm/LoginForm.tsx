@@ -2,45 +2,20 @@
 
 import { type FC, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import ky, { type HTTPError } from 'ky';
+import { signIn } from 'next-auth/react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { type LoginFormSchema, loginFormSchema } from '@/entities/auth';
 import { useToast } from '@/shared/hooks';
 import { Card, Form, Input, LoadingButton } from '@/shared/ui';
 
-const signIn = async (data: LoginFormSchema) => {
-  return await ky.post('/api/auth/login', {
-    json: data,
-  });
-};
-
 export const LoginForm: FC = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
-
-  const loginMutation = useMutation({
-    mutationFn: signIn,
-    onSuccess() {
-      toast({
-        title: 'Успех!',
-        description: 'Вы успешно вошли в систему',
-      });
-
-      router.push('/users');
-    },
-    async onError(error: HTTPError) {
-      const resp = await error.response.json<{ message: string }>();
-      toast({
-        title: 'Что-то пошло не так...',
-        description: resp.message,
-        variant: 'destructive',
-      });
-    },
-  });
+  const params = useParams<{ callbackUrl: string }>();
+  const [loading, setLoading] = useState(false);
 
   const loginForm = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
@@ -49,7 +24,30 @@ export const LoginForm: FC = () => {
       password: '',
     },
   });
-  const onSubmit = (values: LoginFormSchema) => loginMutation.mutate(values);
+  const onSubmit = async (values: LoginFormSchema) => {
+    setLoading(true);
+    const resp = await signIn('credentials', {
+      redirect: false,
+      ...values,
+    });
+
+    if (resp?.error) {
+      toast({
+        title: 'Что-то пошло не так...',
+        description: 'Пользователь не найден',
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Успех!',
+        description: 'Вы успешно вошли в систему',
+      });
+
+      router.push(params?.callbackUrl ?? '/users');
+    }
+
+    setLoading(false);
+  };
 
   return (
     <>
@@ -77,7 +75,7 @@ export const LoginForm: FC = () => {
               onClick={() => setIsPasswordVisible(prev => !prev)}
             />
           </div>
-          <LoadingButton loading={loginMutation.isPending} className="mt-4">
+          <LoadingButton loading={loading} className="mt-4">
             Submit
           </LoadingButton>
         </Form>
