@@ -5,4 +5,16 @@ export {
   isAuthenticatedRequest,
   type NextRequestWithAuth,
 } from './schema';
-export { handlers, signIn, signOut, auth } from './lib';
+
+export {
+  handlers,
+  signIn,
+  signOut,
+  auth,
+  getSessionOrThrowError,
+  getSessionOrLogin,
+  SessionIsNullError,
+  AUTH_IS_REQUIRED,
+} from './lib';
+
+export { LogoutButton } from './ui';

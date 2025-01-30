@@ -1,6 +1,11 @@
 export { Card } from './Card';
 export { Form, FormField } from './Form';
 export { Input } from './Input';
-export { Button, LoadingButton, FormButton } from './Button';
+export { Button, LoadingButton, FormButton, type ButtonProps } from './Button';
 export { Label } from './Label';
 export { Toast } from './Toast';
+export { DataTable } from './DataTable';
+export { Dropdown } from './Dropdown';
+export { Badge } from './Badge';
+export { Separator } from './Separator';
+export { MultiSelect } from './MultiSelect';

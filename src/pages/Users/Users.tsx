@@ -1,25 +1,22 @@
-'use client';
+import { type FC } from 'react';
+import { getBranches } from '@/entities/branches';
+import { getCourses } from '@/entities/courses';
+import { getPosts } from '@/entities/posts';
+import { getUsers, transferUserToTabled } from '@/entities/users';
+import { UserList } from '@/widgets/UserList';
 
-import { signOut, useSession } from 'next-auth/react';
-import { Button } from '@/shared/ui';
-
-export const Users = () => {
-  const session = useSession();
+export const Users: FC = async () => {
+  const users = await getUsers('/users');
+  const posts = await getPosts('/users');
+  const branches = await getBranches('/users');
+  const courses = await getCourses('/users');
 
   return (
-    <main>
-      <h1>Users</h1>
-      <pre>{JSON.stringify(session, null, 2)}</pre>
-      <Button
-        variant="destructive"
-        onClick={async () => {
-          await signOut({
-            redirectTo: '/login',
-          });
-        }}
-      >
-        Logout
-      </Button>
-    </main>
+    <UserList
+      users={users.map(user => transferUserToTabled(user))}
+      posts={posts}
+      branches={branches}
+      courses={courses}
+    />
   );
 };

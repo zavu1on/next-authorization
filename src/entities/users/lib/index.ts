@@ -1,0 +1,1 @@
+export { transferUserToTabled } from './transferUserToTabled';

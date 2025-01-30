@@ -5,12 +5,17 @@ export default auth((request: NextRequest) => {
   if (isAuthenticatedRequest(request)) {
     // ...
   } else if (request.nextUrl.pathname !== '/login') {
-    return NextResponse.redirect(new URL('/login', request.nextUrl.origin));
+    return NextResponse.redirect(
+      new URL(
+        `/login?callbackUrl=${request.nextUrl.href}`,
+        request.nextUrl.origin
+      )
+    );
   }
 
   return NextResponse.next();
 });
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/', '/login', '/users'],
 };

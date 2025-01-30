@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
-import { QueryProvider, ToastProvider } from '@/shared/providers';
+import { ToastProvider } from '@/shared/providers';
 import './globals.scss';
 
 export const metadata: Metadata = {
@@ -16,9 +16,7 @@ export default function RootLayout({
     <html lang="ru">
       <body>
         <SessionProvider>
-          <QueryProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </QueryProvider>
+          <ToastProvider>{children}</ToastProvider>
         </SessionProvider>
       </body>
     </html>

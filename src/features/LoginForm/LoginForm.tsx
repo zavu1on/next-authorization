@@ -4,7 +4,7 @@ import { type FC, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { type LoginFormSchema, loginFormSchema } from '@/entities/auth';
 import { useToast } from '@/shared/hooks';
@@ -14,6 +14,7 @@ export const LoginForm: FC = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const params = useParams<{ callbackUrl: string }>();
   const [loading, setLoading] = useState(false);
 
   const loginForm = useForm<LoginFormSchema>({
@@ -41,7 +42,8 @@ export const LoginForm: FC = () => {
         title: 'Успех!',
         description: 'Вы успешно вошли в систему',
       });
-      router.push('/users');
+
+      router.push(params?.callbackUrl ?? '/users');
     }
 
     setLoading(false);
