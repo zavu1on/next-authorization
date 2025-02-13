@@ -1,6 +1,0 @@
-CREATE TABLE IF NOT EXISTS sessions (
-  id SERIAL PRIMARY KEY NOT NULL,
-  access_token VARCHAR(255) NOT NULL,
-  refresh_token VARCHAR(255) NOT NULL, 
-  session_id VARCHAR(255) UNIQUE NOT NULL
-);

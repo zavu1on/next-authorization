@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next-Authorization  
 
-## Getting Started
+**Next-Authorization** is a modern authentication and authorization solution for Next.js applications, ensuring secure and scalable access management.  
 
-First, run the development server:
+## Features  
 
+- **Secure Authentication**: Uses modern authentication and authorization methods to protect user data.  
+- **Scalability**: Easily integrates with various authentication providers and supports extended functionality.  
+- **Modern Technologies**: Built with TypeScript, SCSS, and other cutting-edge development tools.  
+
+## Technologies  
+
+- [Next.js](https://nextjs.org/): A React framework with server-side rendering support.  
+- [TypeScript](https://www.typescriptlang.org/): A strongly typed programming language that enhances JavaScript.  
+- [SCSS](https://sass-lang.com/): A CSS preprocessor for writing structured and maintainable styles.  
+- [NextAuth.js](https://next-auth.js.org/): A powerful authentication library for Next.js applications, supporting multiple providers.  
+
+## Installation  
+
+1. **Clone the repository**:
+
+```bash
+git clone https://github.com/zavu1on/next-authorization.git
+cd next-authorization
+```
+2. **Install dependencies:**:  
+```bash
+npm install
+# or
+yarn install
+```
+3. **Set up environment variables:**:  
+```bash
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your_secret_key
+```
+4. **Start the development server:**:  
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Usage
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### Configuring NextAuth
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+In `pages/api/auth/[...nextauth].ts`, configure the authentication providers. Example setup for Keycloak:
+```ts
+import NextAuth from 'next-auth';
+import KeycloakProvider from 'next-auth/providers/keycloak';
 
-## Learn More
+export default NextAuth({
+  providers: [
+    KeycloakProvider({
+      clientId: process.env.KEYCLOAK_CLIENT_ID,
+      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
+      issuer: process.env.KEYCLOAK_ISSUER,
+    }),
+  ],
+  // Additional settings
+});
+```
 
-To learn more about Next.js, take a look at the following resources:
+#### Protecting Routes
+To secure routes, use the `withAuth` HOC or middleware. Example using middleware:
+```ts
+import { withAuth } from 'next-auth/middleware';
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+export default withAuth({
+  pages: {
+    signIn: '/auth/signin',
+  },
+});
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+export const config = {
+  matcher: ['/protected/:path*'],
+};
+```
